@@ -74,18 +74,3 @@ tasks.named('test') {
     // Use JUnit Jupiter for unit tests.
     useJUnitPlatform()
 }
-
-task makeHttpRequest {
-    def userAgent = "${project.name}/${project.version}"
-    doLast {
-        def client = new groovyx.net.http.RESTClient('https://api.github.com/')
-        def response = client.get(path: '/orgs/gitblit-org/repos', contentType: groovyx.net.http.ContentType.JSON, headers: [ 'User-Agent': "$userAgent" ])
-
-        if (response.status == 200) {
-            println "Request was successful!"
-            println "Response: ${response.data}"
-        } else {
-            println "Request failed with status ${response.status}"
-        }
-    }
-}
