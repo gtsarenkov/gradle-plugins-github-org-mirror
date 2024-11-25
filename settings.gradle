@@ -6,4 +6,3 @@
  */
 
 rootProject.name = 'github-organization-repositories-mirror'
-include('plugin')
