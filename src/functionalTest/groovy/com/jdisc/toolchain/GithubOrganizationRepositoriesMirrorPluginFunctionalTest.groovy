@@ -30,7 +30,7 @@ plugins {
     id('com.jdisc.toolchain.github-organization-repo-mirror')
 }
 
-cloneAndMirrorRepos {
+cloneMirrorRepos {
     githubOrg="gitblit-org"
     skipClone=true
 }
@@ -41,7 +41,7 @@ cloneAndMirrorRepos {
         runner.forwardOutput()
         runner.withDebug(true)
         runner.withPluginClasspath()
-        runner.withArguments("--debug", "--stacktrace", "cloneAndMirrorRepos")
+        runner.withArguments("--debug", "--stacktrace", "cloneMirrorRepos")
         runner.withProjectDir(projectDir)
         def result = runner.build()
 

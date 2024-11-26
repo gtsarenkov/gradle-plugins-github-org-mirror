@@ -32,7 +32,7 @@ class CloneMirrorReposTask extends DefaultTask {
     }
 
     @TaskAction
-    void cloneAndMirrorRepos() {
+    void cloneMirrorRepos() {
         if (!githubOrg.present) {
             throw new GradleException("You must specify githubOrg to clone")
         } else {

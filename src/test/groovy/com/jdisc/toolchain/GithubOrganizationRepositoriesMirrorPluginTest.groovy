@@ -18,6 +18,6 @@ class GithubOrganizationRepositoriesMirrorPluginTest extends Specification {
         project.plugins.apply("com.jdisc.toolchain.github-organization-repo-mirror")
 
         then:
-        project.tasks.findByName("cloneAndMirrorRepos") != null
+        project.tasks.findByName("cloneMirrorRepos") != null
     }
 }
