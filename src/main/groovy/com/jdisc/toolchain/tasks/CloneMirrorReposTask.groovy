@@ -1,4 +1,4 @@
-package com.jdisc.toolchain
+package com.jdisc.toolchain.tasks
 
 import groovyx.net.http.ContentType
 import groovyx.net.http.RESTClient
@@ -11,7 +11,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
-class CloneAndMirrorReposTask extends DefaultTask {
+class CloneMirrorReposTask extends DefaultTask {
     @Input
     final Property<String> githubOrg = project.objects.property(String.class)
 
@@ -26,7 +26,7 @@ class CloneAndMirrorReposTask extends DefaultTask {
     @OutputDirectory
     final DirectoryProperty targetDir
 
-    CloneAndMirrorReposTask() {
+    CloneMirrorReposTask() {
         githubApiToken = project.objects.property(String.class).convention(System.getenv('GITHUB_API_TOKEN'))
         targetDir = project.objects.directoryProperty().convention(project.layout.buildDirectory.dir("git").get())
     }

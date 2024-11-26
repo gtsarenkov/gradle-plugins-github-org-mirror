@@ -41,9 +41,7 @@ cloneAndMirrorRepos {
         runner.forwardOutput()
         runner.withDebug(true)
         runner.withPluginClasspath()
-        runner.withArguments("--debug")
-        runner.withArguments("--stacktrace")
-        runner.withArguments("cloneAndMirrorRepos")
+        runner.withArguments("--debug", "--stacktrace", "cloneAndMirrorRepos")
         runner.withProjectDir(projectDir)
         def result = runner.build()
 
