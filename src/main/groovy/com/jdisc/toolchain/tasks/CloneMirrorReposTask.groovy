@@ -26,6 +26,8 @@ class CloneMirrorReposTask extends DefaultTask {
     @OutputDirectory
     final DirectoryProperty targetDir
 
+    private final _headers = ['User-Agent': "${project.name}/${project.version}"]
+
     CloneMirrorReposTask() {
         githubApiToken = project.objects.property(String.class).convention(System.getenv('GITHUB_API_TOKEN'))
         targetDir = project.objects.directoryProperty().convention(project.layout.buildDirectory.dir("git").get())
@@ -53,7 +55,7 @@ class CloneMirrorReposTask extends DefaultTask {
         }
 
         def restClient = new RESTClient('https://api.github.com/')
-        def headers = ['User-Agent': "${project.name}/${project.version}"]
+        def headers = _headers
         if (githubApiToken.present) {
             headers['Authorization'] = "token $githubApiToken"
         }
@@ -77,7 +79,7 @@ class CloneMirrorReposTask extends DefaultTask {
             def repoName = repoUrl.tokenize('/').last().replace('.git', '')
             def command = ["git", "clone", "--mirror", repoUrl, new File(targetDir.get().asFile, "${repoName}.git").absolutePath]
             logger.lifecycle "Executing: ${command.join(' ')}"
-            if (!skipClone) {
+            if (skipClone.getOrElse(false)) {
                 def process = command.execute()
                 process.waitFor()
                 println process.text
