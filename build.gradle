@@ -18,8 +18,8 @@ dependencies {
 
     testImplementation libs.spock.core
     testImplementation 'org.slf4j:slf4j-api:2.0.0'
-    //testImplementation 'ch.qos.logback:logback-classic:1.2.10'
-    testImplementation 'ch.qos.logback:logback-core:1.2.10'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.10'
+    //testImplementation 'ch.qos.logback:logback-core:1.2.10'
 
     testRuntimeOnly 'org.slf4j:jcl-over-slf4j:2.0.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

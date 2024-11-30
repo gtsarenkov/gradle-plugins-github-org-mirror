@@ -10,6 +10,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.slf4j.event.Level
 
 class CloneMirrorReposTask extends DefaultTask {
     @Input
@@ -63,22 +64,50 @@ class CloneMirrorReposTask extends DefaultTask {
             headers['Authorization'] = "token $githubApiToken"
         }
 
-        def query = ['per_page': perPage.getOrElse(200)]
-
+        def query = ['per_page': perPage.getOrElse(100)]
         def path = "/orgs/${githubOrg.get()}/repos"
-        def response = restClient.get(
-                path: path,
-                contentType: ContentType.JSON,
-                query: query,
-                headers: headers
-        )
+        def repos = []
 
-        if (response.status != 200) {
-            println "Failed to fetch repositories, status: ${response.status}"
-            return
+        while (path) {
+            def response = restClient.get(
+                    path: path,
+                    contentType: ContentType.JSON,
+                    headers: headers,
+                    query: query,
+            )
+
+            if (response.status != 200) {
+                logger.error "Failed to fetch repositories, status: ${response.status}"
+                throw new GradleException("Failed to fetch repositories, status: ${response.status}")
+            }
+
+            repos.addAll(response.data.collect { it.clone_url })
+
+            path = null  // Reset path for the next iteration
+            def linkHeader = response.headers.find { it.name == 'Link' }?.value
+
+            if (linkHeader) {
+                def linkPattern = ~/.*<(.+?)>; rel="next".*/
+                def matcher = linkPattern.matcher(linkHeader)
+
+                if (matcher.find()) {
+                    String nextUrl = matcher.group(1)
+                    // Parse the URL using URI
+                    URI uri = new URI(nextUrl)
+                    path = uri.getPath() // Gets the raw path
+
+                    // Convert query into a map
+                    def nextQuery = uri.getQuery()
+                    query.clear() // Clear existing query
+                    nextQuery.split('&').each { param ->
+                        def parts = param.split('=')
+                        if (parts.size() == 2) {
+                            query[parts[0]] = parts[1]
+                        }
+                    }
+                }
+            }
         }
-
-        def repos = response.data.collect { it.clone_url }
 
         repos.each { repoUrl ->
             def repoName = repoUrl.tokenize('/').last().replace('.git', '')
