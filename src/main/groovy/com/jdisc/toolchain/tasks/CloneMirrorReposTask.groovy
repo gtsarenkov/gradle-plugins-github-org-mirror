@@ -23,6 +23,9 @@ class CloneMirrorReposTask extends DefaultTask {
     @Optional
     final Property<Boolean> skipClone = project.objects.property(Boolean.class).convention(false)
 
+    @Input
+    final Property<Integer> perPage = project.objects.property(Integer.class).convention(200)
+
     @OutputDirectory
     final DirectoryProperty targetDir
 
@@ -60,11 +63,13 @@ class CloneMirrorReposTask extends DefaultTask {
             headers['Authorization'] = "token $githubApiToken"
         }
 
+        def query = ['per_page': perPage.getOrElse(200)]
+
         def path = "/orgs/${githubOrg.get()}/repos"
         def response = restClient.get(
                 path: path,
                 contentType: ContentType.JSON,
-//                query: [per_page: 200],
+                query: query,
                 headers: headers
         )
 
