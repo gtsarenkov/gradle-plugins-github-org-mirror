@@ -79,7 +79,7 @@ class CloneMirrorReposTask extends DefaultTask {
             def repoName = repoUrl.tokenize('/').last().replace('.git', '')
             def command = ["git", "clone", "--mirror", repoUrl, new File(targetDir.get().asFile, "${repoName}.git").absolutePath]
             logger.lifecycle "Executing: ${command.join(' ')}"
-            if (skipClone.getOrElse(false)) {
+            if (!skipClone.getOrElse(false)) {
                 def process = command.execute()
                 process.waitFor()
                 println process.text
